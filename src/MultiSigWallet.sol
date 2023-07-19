@@ -3,6 +3,12 @@ pragma solidity 0.8.18;
 
 contract MultiSigWallet {
     //events
+    event SubmitTransaction(
+        address indexed sender, uint256 indexed txIndex, address indexed to, uint256 value, bytes data
+    );
+    event ConfirmTransaction(address indexed owner, uint256 indexed txIndex);
+    event ExecutedTransaction(address indexed owner, uint256 indexed txIndex);
+    event RevokeConfirmation(address indexed owner, uint256 indexed txIndex);
 
     //storage variables
 
@@ -13,7 +19,7 @@ contract MultiSigWallet {
     struct Transaction {
         address to;
         uint256 value;
-        bytes32 data;
+        bytes data;
         bool executed;
         uint256 numConfirmations;
     }
@@ -49,7 +55,7 @@ contract MultiSigWallet {
         require(_owners.length > 0, "owners required");
         require(
             _numConfirmationsRequired > 0 && _numConfirmationsRequired <= _owners.length,
-            "invliad number of required confirmations"
+            "invalid number of required confirmations"
         );
 
         for (uint256 i = 0; i < owners.length; i++) {
@@ -94,7 +100,7 @@ contract MultiSigWallet {
         transaction.executed = true;
         (bool success,) = transaction.to.call{value: transaction.value}(transaction.data);
         require(success, "tx failed");
-        emit ExecutedTransaction(msgs.sender, _txIndex);
+        emit ExecutedTransaction(msg.sender, _txIndex);
     }
 
     function revokeConfirmation(uint256 _txIndex) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
