@@ -114,6 +114,9 @@ contract MultiSigWallet {
     }
 
     //public view functions
+    function getOwners() public view returns (address[] memory) {
+        return owners;
+    }
 
     //fall back functions
     receive() external payable {
