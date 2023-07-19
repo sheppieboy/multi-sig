@@ -118,6 +118,19 @@ contract MultiSigWallet {
         return owners;
     }
 
+    function getNumberOfTransactions() public view returns (uint256) {
+        return transactions.length;
+    }
+
+    function getTransaction(uint256 _txIndex)
+        public
+        view
+        returns (address to, uint256 value, bytes memory data, bool executed, uint256 numConfirmations)
+    {
+        Transaction storage transaction = transactions[_txIndex];
+        return (transaction.to, transaction.value, transaction.data, transaction.executed, transaction.numConfirmations);
+    }
+
     //fall back functions
     receive() external payable {
         emit Deposit(msg.sender, msg.value, address(this).balance);
