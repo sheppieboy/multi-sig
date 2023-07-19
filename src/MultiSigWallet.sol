@@ -113,4 +113,9 @@ contract MultiSigWallet {
     }
 
     //public view functions
+
+    //fall back functions
+    receive() external payable {
+        emit Deposit(msg.sender, msg.value, address(this).balance);
+    }
 }
